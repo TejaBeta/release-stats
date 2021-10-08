@@ -14,18 +14,79 @@ limitations under the License.
 package grs
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"net/url"
+	"strings"
 )
 
-// const githubAPI = "https://api.github.com/repos"
+type release struct {
+	Name          string `json:"name"`
+	Publised_Date string `json:"published_at"`
+	Assets        []assets
+}
 
-// headers := [...]string{"Accept: application/vnd.github.v3+json"}
+type assets struct {
+	Name  string `json:"name"`
+	Count int    `json:"download_count"`
+}
 
 func GetStats(repoLink string) {
 	link, err := url.ParseRequestURI(repoLink)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(link)
+
+	response, err := comms(splitter(fmt.Sprint(link)))
+	if err != nil {
+		panic(err)
+	}
+
+	rel := []release{}
+	err = json.Unmarshal([]byte(response), &rel)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, v := range rel {
+		count := 0
+		for _, a := range v.Assets {
+			count += a.Count
+		}
+		fmt.Println("Name:      ", v.Name)
+		fmt.Println("Published: ", v.Publised_Date)
+		fmt.Println("Downloads: ", count)
+		fmt.Println("============================================================")
+	}
+
+}
+
+func splitter(repoLink string) string {
+	s := strings.Split(strings.Split(fmt.Sprint(repoLink), "//")[1], "/")
+	return "https://api." + s[0] + "/repos/" + s[1] + "/" + s[2] + "/releases"
+}
+
+func comms(apiLink string) (string, error) {
+	req, err := http.Get(apiLink)
+	if err != nil {
+		return "", err
+	}
+	req.Header = http.Header{
+		"Accept": []string{"application/vnd.github.v3+json"},
+	}
+
+	defer req.Body.Close()
+
+	if req.StatusCode != 200 {
+		return "", fmt.Errorf("unable to fetch repo information: %v", req.StatusCode)
+	}
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
 }

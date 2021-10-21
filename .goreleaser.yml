@@ -4,8 +4,8 @@
 # Build customization
 builds:
   - main: ./main.go
-    binary: grs
-    ldflags: -s -w -X github.com/TejaBeta/grs/cmd.version={{.Version}} -X github.com/TejaBeta/grs/cmd.commit={{.Commit}}
+    binary: release-stats
+    ldflags: -s -w -X github.com/TejaBeta/release-stats/cmd.version={{.Version}} -X github.com/TejaBeta/release-stats/cmd.commit={{.Commit}}
     goos:
       - windows
       - darwin
@@ -16,7 +16,7 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - id: grs
+  - id: release-stats
     format: tar.gz
     replacements:
       amd64: x86_64

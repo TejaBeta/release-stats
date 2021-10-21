@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package grs
+package releasestats
 
 import (
 	"encoding/json"
@@ -33,6 +33,7 @@ type assets struct {
 	Count int    `json:"download_count"`
 }
 
+// GetStats is the main function
 func GetStats(repoLink string) {
 	link, err := url.ParseRequestURI(repoLink)
 	if err != nil {
@@ -50,6 +51,18 @@ func GetStats(repoLink string) {
 		panic(err)
 	}
 
+	totalCount := 0
+
+	for _, v1 := range rel {
+		for _, a1 := range v1.Assets {
+			totalCount += a1.Count
+		}
+	}
+	fmt.Println("============================================================")
+	fmt.Println("Repository:", repoLink)
+	fmt.Println("Total Downloads:", totalCount)
+	fmt.Println("============================================================")
+
 	for _, v := range rel {
 		count := 0
 		for _, a := range v.Assets {
@@ -58,6 +71,11 @@ func GetStats(repoLink string) {
 		fmt.Println("Name:      ", v.Name)
 		fmt.Println("Published: ", v.Publised_Date)
 		fmt.Println("Downloads: ", count)
+		for _, a1 := range v.Assets {
+			fmt.Println("--------------------------------------")
+			fmt.Println("Release Name:", a1.Name)
+			fmt.Println("Downloads:", a1.Count)
+		}
 		fmt.Println("============================================================")
 	}
 

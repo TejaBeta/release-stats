@@ -14,7 +14,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/TejaBeta/grs/internal/grs"
+	"github.com/TejaBeta/release-stats/internal/releasestats"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -27,11 +27,11 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
-	Use:   "grs [url]",
+	Use:   "release-stats [url]",
 	Short: "A tiny cli to get github release stats",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		grs.GetStats(args[0])
+		releasestats.GetStats(args[0])
 	},
 }
 

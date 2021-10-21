@@ -14,7 +14,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/TejaBeta/grs/cmd"
+	"github.com/TejaBeta/release-stats/cmd"
 	log "github.com/sirupsen/logrus"
 )
 
